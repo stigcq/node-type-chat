@@ -35,6 +35,12 @@ npm start
 
 4. When a client writes a message (in shell) the client itself sends the message to available peers
 
-5. When a new client connects to demohub, the demohub pushes the client to the existing clients (this can be discussed, it could be new client who instead presents itself to existing ones)
+5. When a new client connects to demohub, the demohub contact existing clients to make them refresh peer list 
+
+## Next up
+
+Well the demohub should be integrated so that every client has the hub functionality, so that one client can checkin with another client and pull a list of peers from this client. So when starting a client one is polled for IP:port of an existing client, which then is entry point of new client.
+
+
 
 
