@@ -8,7 +8,7 @@ import { DemoHub } from "./DemoHub";
 const demoHubPort = 1111;
 
 const hub = new DemoHub();
-hub.startServer(demoHubPort);
+
 
 const http = require("http");
 const request = require("request");
@@ -54,6 +54,11 @@ const server = http.createServer((request: any, response: any) => {
 
         }
 
+        if (url == "/clients") {
+
+            peerService.refreshPeers();
+        }
+
         response.statusCode = 200;
         response.setHeader("Content-Type", "text/plain");
         response.end("Hello World test\n");
@@ -65,6 +70,7 @@ const server = http.createServer((request: any, response: any) => {
 
 const stdin = process.openStdin();
 
+console.log("> To start local demohub write " + chalk.red.bgWhite("demohub"));
 console.log("> To set display name write " + chalk.red.bgWhite("name [display-name]"));
 console.log("> To connect chat write " + chalk.red.bgWhite("connect [port-to-listen]"));
 console.log("> To send message write " + chalk.red.bgWhite("# [your-message]"));
@@ -78,6 +84,10 @@ stdin.addListener("data", function(d) {
     if (input.startsWith("name")) {
         peerNode.displayName = input.substring(5);
         console.log("> Name changed");
+    }
+
+    if (input.startsWith("demohub")) {
+        hub.startServer(demoHubPort);
     }
 
     if (input.startsWith("#")) {

@@ -42,6 +42,24 @@ export class PeerService {
         });
     }
 
+    refreshPeers() {
+
+        const options = {
+            url: "http://127.0.0.1:1111/peers",
+            headers: {
+              "User-Agent": "Mozilla/5.0",
+              "Accept-Language": "*"
+            }
+          };
+
+          this.request.post(options,
+             (error: string, response: any, body: string) => {
+
+            this.initialPeers = JSON.parse(body);
+
+        });
+    }
+
 
     pushToPeers(message: string) {
 

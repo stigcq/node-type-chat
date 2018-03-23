@@ -14,6 +14,9 @@ export class DemoHub {
 
     peers: PeerNode[] = Array();
 
+    request = require("request");
+
+
     startServer(port: number) {
 
         const server = http.createServer((request: any, response: any) => {
@@ -47,8 +50,35 @@ export class DemoHub {
                     response.statusCode = 200;
                     response.setHeader("Content-Type", "application/json");
                     response.end(JSON.stringify(this.peers));
+
+                    for (const entry of this.peers) {
+
+                        if (entry.id != peer.id) {
+
+                            const options = {
+                                url: "http://" + entry.ip + ":" + entry.listenPort + "/clients",
+                                headers: {
+                                "User-Agent": "Mozilla/5.0",
+                                "Accept-Language": "*"
+                                }
+                            };
+
+                            this.request(options,
+                                (error: string, response: any, body: string) => {
+
+                            });
+                        }
+                    }
+
                 });
 
+
+            }
+
+            if (url == "/peers") {
+                response.statusCode = 200;
+                response.setHeader("Content-Type", "application/json");
+                response.end(JSON.stringify(this.peers));
 
             }
 
