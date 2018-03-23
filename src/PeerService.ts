@@ -17,14 +17,19 @@ export class PeerService {
 
         /** Had issue with rejected connection to server without these headers */
         const options = {
-            url: "http://itselskabet.nu/peers.json",
+            url: "http://127.0.0.1:1111/checkin",
             headers: {
               "User-Agent": "Mozilla/5.0",
               "Accept-Language": "*"
+            },
+            form: {
+                "id": this.myCreds.id,
+                "displayName": this.myCreds.displayName,
+                "port": this.myCreds.listenPort
             }
           };
 
-        this.request(options,
+          this.request.post(options,
              (error: string, response: any, body: string) => {
             // console.log("Connect error:", error); // Print the error if one occurred
             // console.log("Connect statusCode:", response && response.statusCode); // Print the response status code if a response was received

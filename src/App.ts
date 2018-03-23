@@ -3,17 +3,12 @@
  */
 import { PeerNode } from "./PeerNode";
 import { PeerService } from "./PeerService";
+import { DemoHub } from "./DemoHub";
 
-const peerNode = new PeerNode();
-peerNode.displayName = "Hello world";
+const demoHubPort = 1111;
 
-// this is suppose to be some hash which dont change
-peerNode.id = "1";
-
-
-const peerService = new PeerService(peerNode);
-
-console.log(peerNode.myName());
+const hub = new DemoHub();
+hub.startServer(demoHubPort);
 
 const http = require("http");
 const request = require("request");
@@ -21,6 +16,18 @@ const chalk = require("chalk");
 const querystring = require("querystring");
 
 require("string.prototype.startswith");
+const md5 = require("md5");
+
+// create my own peer
+const peerNode = new PeerNode();
+peerNode.displayName = "Hello world";
+
+const myDate = new Date();
+peerNode.id = md5(myDate.getTime());
+console.log("Your id is set to: " + peerNode.id);
+
+const peerService = new PeerService(peerNode);
+
 
 const hostname = "127.0.0.1";
 
@@ -81,6 +88,7 @@ stdin.addListener("data", function(d) {
     if (input.startsWith("connect")) {
 
         const port = input.substring(8);
+        peerNode.listenPort = parseInt(port);
 
         console.log(chalk.blue.bgRed("> Trying to get peer list... "));
         peerService.locatePeers();
