@@ -5,8 +5,6 @@ import { PeerNode } from "./PeerNode";
 import { PeerService } from "./PeerService";
 import { DemoHub } from "./DemoHub";
 
-// const demoHubPort = 1111;
-
 
 const http = require("http");
 const request = require("request");
@@ -27,44 +25,6 @@ console.log("Your id is set to: " + peerNode.id);
 const peerService = new PeerService(peerNode);
 
 const hub = new DemoHub(peerService);
-
-
-// const hostname = "127.0.0.1";
-
-/*const server = http.createServer((request: any, response: any) => {
-
-    const { headers, method, url } = request;
-
-    if (url != "/favicon.ico") {
-
-        if (url == "/message") {
-
-            let body: any = [];
-
-            request.on("data", (chunk: any) => {
-                body.push(chunk);
-            }).on("end", () => {
-                body = Buffer.concat(body).toString();
-                // console.log(body);
-
-                const post = querystring.parse(body);
-                console.log(chalk.red.bgWhite(post.displayName) + ": " + post.message);
-
-            });
-
-        }
-
-        if (url == "/clients") {
-
-            peerService.refreshPeers();
-        }
-
-        response.statusCode = 200;
-        response.setHeader("Content-Type", "text/plain");
-        response.end("Hello World test\n");
-    }
-
-});*/
 
 
 
@@ -120,10 +80,6 @@ stdin.addListener("data", function(d) {
 
         hub.startServer(parseInt(port));
 
-
-        /*server.listen(port, () => {
-            // console.log(chalk.blue.bgWhite(`Server listens on http://${hostname}:${port}/`));
-        });*/
     }
 
 

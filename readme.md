@@ -27,19 +27,24 @@ npm start
 
 ## What it does
 
-1. Start a demohub server runnng local by writing demohub in shell
+1. When starting first peer start a demohub by writing demohub [port] in shell
 
 2. The demo hub server then listens for clients that connects and respond with a json formatted peer list
 
-3. The clients each run their own server to listen for incoming messages
+3. A new client needs know address of existing peer node, which is set by writing hubport [port] in shell
+
+4. Then the new client connects by writting connect [myownport], where by it contacts first peer and gets a peerlist. The new client also functions as potential hub, so future peers can connect to both peers
 
 4. When a client writes a message (in shell) the client itself sends the message to available peers
 
-5. When a new client connects to demohub, the demohub contact existing clients to make them refresh peer list 
+5. When a new client connects to a peer, the peer contact existing peers to make them refresh peer list 
 
 ## Next up
 
-Well the demohub should be integrated so that every client has the hub functionality, so that one client can checkin with another client and pull a list of peers from this client. So when starting a client one is polled for IP:port of an existing client, which then is entry point of new client.
+The code needs a bit cleaning up, and then IPs should be integrated, since right now it assumes 127.0.0.1
+for all. Though when a peer connects its IP is read, but in the input to connect to the peer network
+needs IP input. 
+
 
 
 
