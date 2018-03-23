@@ -3,7 +3,7 @@ export class PeerNode {
 
     id: string;
 
-    listenPort: number;
+    port: number = 0;
 
     ip: string;
 

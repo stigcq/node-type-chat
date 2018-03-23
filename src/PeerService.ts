@@ -8,7 +8,9 @@ export class PeerService {
 
     hubPort: number = undefined;
 
-    initialPeers: PeerNode[] = Array();
+    hubIp: string = "127.0.0.1";
+
+    peers: PeerNode[] = Array();
 
 
     constructor(myCreds: PeerNode) {
@@ -20,7 +22,7 @@ export class PeerService {
 
         /** Had issue with rejected connection to server without these headers */
         const options = {
-            url: "http://127.0.0.1:" + this.hubPort + "/checkin",
+            url: "http://" + this.hubIp + ":" + this.hubPort + "/checkin",
             headers: {
               "User-Agent": "Mozilla/5.0",
               "Accept-Language": "*"
@@ -28,23 +30,22 @@ export class PeerService {
             form: {
                 "id": this.myCreds.id,
                 "displayName": this.myCreds.displayName,
-                "port": this.myCreds.listenPort
+                "port": this.myCreds.port
             }
           };
 
-          console.log("http://127.0.0.1:" + this.hubPort + "/checkin");
+          console.log("http://" + this.hubIp + ":" + this.hubPort + "/checkin");
 
           this.request.post(options,
              (error: string, response: any, body: string) => {
-            // console.log("Connect error:", error); // Print the error if one occurred
-            // console.log("Connect statusCode:", response && response.statusCode); // Print the response status code if a response was received
-            console.log("body:", body); // Print the HTML for the Google homepage.
 
-            this.initialPeers = JSON.parse(body);
+                console.log("body:", body);
 
-            console.log("Found " + this.initialPeers.length + " peers");
+                this.peers = JSON.parse(body);
 
-        });
+                console.log("Found " + this.peers.length + " peers");
+
+            });
     }
 
     addPeers(peers: PeerNode[]) {
@@ -52,7 +53,7 @@ export class PeerService {
         for (const entry of peers) {
 
             if (!this.hasPeer(entry))
-                this.initialPeers.push(entry);
+                this.peers.push(entry);
 
         }
     }
@@ -60,13 +61,13 @@ export class PeerService {
     addPeer(peer: PeerNode) {
 
         if (!this.hasPeer(peer))
-            this.initialPeers.push(peer);
+            this.peers.push(peer);
 
     }
 
     hasPeer(peer: PeerNode): boolean {
 
-        for (const entry of this.initialPeers) {
+        for (const entry of this.peers) {
 
             if (peer.id == entry.id)
                 return true;
@@ -77,17 +78,28 @@ export class PeerService {
     }
 
 
+    findHub() {
+
+        for (const entry of this.peers) {
+
+            if (this.myCreds.id != entry.id)
+                this.hubPort = entry.port;
+
+        }
+    }
+
+
     refreshPeers() {
 
         const options = {
-            url: "http://127.0.0.1:" + this.hubPort + "/peers",
+            url: "http://" + this.hubIp + ":" + this.hubPort + "/peers",
             headers: {
               "User-Agent": "Mozilla/5.0",
               "Accept-Language": "*"
             }
           };
 
-          console.log("http://127.0.0.1:" + this.hubPort + "/peers");
+          console.log("http://" + this.hubIp + ":" + this.hubPort + "/peers");
 
           this.request.post(options,
              (error: string, response: any, body: string) => {
@@ -100,8 +112,8 @@ export class PeerService {
 
     pushToPeers(message: string) {
 
-        for (let i = 0; i < this.initialPeers.length; i++) {
-            this.pushToPeer(this.initialPeers[i], message);
+        for (let i = 0; i < this.peers.length; i++) {
+            this.pushToPeer(this.peers[i], message);
         }
     }
 
@@ -110,13 +122,13 @@ export class PeerService {
         // console.log("sending messsage to" + peer.ip);
 
         const options = {
-            url: "http://" + peer.ip + ":" + peer.listenPort + "/message",
+            url: "http://" + peer.ip + ":" + peer.port + "/message",
             headers: {
               "User-Agent": "Mozilla/5.0",
               "Accept-Language": "*"
             },
             form: {
-                "peer_id": this.myCreds.id,
+                "id": this.myCreds.id,
                 "message": message,
                 "displayName": this.myCreds.displayName
             }

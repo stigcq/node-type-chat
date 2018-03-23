@@ -30,10 +30,9 @@ const hub = new DemoHub(peerService);
 
 const stdin = process.openStdin();
 
-console.log("> To start local demohub write " + chalk.red.bgWhite("demohub [port-to-listen]"));
-console.log("> To hub info write " + chalk.red.bgWhite("hubport [port-to-connect]"));
+console.log("> To set your own port write " + chalk.red.bgWhite("port [port-to-listen]"));
 console.log("> To set display name write " + chalk.red.bgWhite("name [display-name]"));
-console.log("> To connect existing hub write " + chalk.red.bgWhite("connect [port-to-listen]"));
+console.log("> To connect network write " + chalk.red.bgWhite("connect [port-to-connect]"));
 console.log("> To send message write " + chalk.red.bgWhite("# [your-message]"));
 // console.log("To send message to user write " + chalk.red.bgWhite("@[display-name] [your-message]"));
 
@@ -47,9 +46,10 @@ stdin.addListener("data", function(d) {
         console.log("> Name changed");
     }
 
-    if (input.startsWith("demohub")) {
-        const port = parseInt(input.substring(8));
-        peerNode.listenPort = port;
+    if (input.startsWith("port")) {
+
+        const port = parseInt(input.substring(5));
+        peerNode.port = port;
         peerNode.ip = "127.0.0.1";
         hub.startServer(port);
 
@@ -72,13 +72,22 @@ stdin.addListener("data", function(d) {
 
     if (input.startsWith("connect")) {
 
-        const port = input.substring(8);
-        peerNode.listenPort = parseInt(port);
+        if (peerNode.port == 0) {
+
+            console.log("Set your own port first");
+            return;
+        }
+
+        // const port = input.substring(8);
+        // peerNode.port = parseInt(port);
+
+        peerService.hubPort = parseInt(input.substring(8));
 
         console.log(chalk.blue.bgRed("> Trying to get peer list... "));
         peerService.locatePeers();
 
-        hub.startServer(parseInt(port));
+        // if(hub.isStarted)
+        // hub.startServer(peerNode.port);
 
     }
 
