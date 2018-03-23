@@ -5,9 +5,7 @@ import { PeerNode } from "./PeerNode";
 import { PeerService } from "./PeerService";
 import { DemoHub } from "./DemoHub";
 
-const demoHubPort = 1111;
-
-const hub = new DemoHub();
+// const demoHubPort = 1111;
 
 
 const http = require("http");
@@ -28,10 +26,12 @@ console.log("Your id is set to: " + peerNode.id);
 
 const peerService = new PeerService(peerNode);
 
+const hub = new DemoHub(peerService);
 
-const hostname = "127.0.0.1";
 
-const server = http.createServer((request: any, response: any) => {
+// const hostname = "127.0.0.1";
+
+/*const server = http.createServer((request: any, response: any) => {
 
     const { headers, method, url } = request;
 
@@ -64,15 +64,16 @@ const server = http.createServer((request: any, response: any) => {
         response.end("Hello World test\n");
     }
 
-});
+});*/
 
 
 
 const stdin = process.openStdin();
 
-console.log("> To start local demohub write " + chalk.red.bgWhite("demohub"));
+console.log("> To start local demohub write " + chalk.red.bgWhite("demohub [port-to-listen]"));
+console.log("> To hub info write " + chalk.red.bgWhite("hubport [port-to-connect]"));
 console.log("> To set display name write " + chalk.red.bgWhite("name [display-name]"));
-console.log("> To connect chat write " + chalk.red.bgWhite("connect [port-to-listen]"));
+console.log("> To connect existing hub write " + chalk.red.bgWhite("connect [port-to-listen]"));
 console.log("> To send message write " + chalk.red.bgWhite("# [your-message]"));
 // console.log("To send message to user write " + chalk.red.bgWhite("@[display-name] [your-message]"));
 
@@ -87,7 +88,21 @@ stdin.addListener("data", function(d) {
     }
 
     if (input.startsWith("demohub")) {
-        hub.startServer(demoHubPort);
+        const port = parseInt(input.substring(8));
+        peerNode.listenPort = port;
+        peerNode.ip = "127.0.0.1";
+        hub.startServer(port);
+
+    }
+
+    /**
+     * If this is started then one shouldnt be able to run connect.
+     * Or least need to check if demohub is running. The peerservice
+     * could connect to another client
+     */
+    if (input.startsWith("hubport")) {
+        const port = input.substring(8);
+        peerService.hubPort = parseInt(port);
     }
 
     if (input.startsWith("#")) {
@@ -103,9 +118,12 @@ stdin.addListener("data", function(d) {
         console.log(chalk.blue.bgRed("> Trying to get peer list... "));
         peerService.locatePeers();
 
-        server.listen(port, () => {
+        hub.startServer(parseInt(port));
+
+
+        /*server.listen(port, () => {
             // console.log(chalk.blue.bgWhite(`Server listens on http://${hostname}:${port}/`));
-        });
+        });*/
     }
 
 

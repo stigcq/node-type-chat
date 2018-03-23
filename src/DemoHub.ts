@@ -5,6 +5,7 @@ const querystring = require("querystring");
 require("string.prototype.startswith");
 
 import { PeerNode } from "./peernode";
+import { PeerService } from "./peerservice";
 
 
 /**
@@ -12,9 +13,15 @@ import { PeerNode } from "./peernode";
  */
 export class DemoHub {
 
-    peers: PeerNode[] = Array();
+    // peers: PeerNode[] = Array();
+
+    peerService: PeerService;
 
     request = require("request");
+
+    constructor(peerService: PeerService) {
+        this.peerService = peerService;
+    }
 
 
     startServer(port: number) {
@@ -24,7 +31,6 @@ export class DemoHub {
             const { headers, method, url } = request;
 
             if (url == "/checkin") {
-
 
                 let body: any = [];
 
@@ -45,15 +51,22 @@ export class DemoHub {
                         peer.ip = peer.ip.substr(7);
 
                     if (peer.id != undefined)
-                        this.peers.push(peer);
+                        this.peerService.addPeer(peer);
+
+                    // for first connecting peer set peerservice to use
+                    // that one as hub or make method findHub
+                    if (this.peerService.initialPeers.length == 2)
+                        this.peerService.hubPort = peer.listenPort;
 
                     response.statusCode = 200;
                     response.setHeader("Content-Type", "application/json");
-                    response.end(JSON.stringify(this.peers));
+                    response.end(JSON.stringify(this.peerService.initialPeers));
 
-                    for (const entry of this.peers) {
+                    for (const entry of this.peerService.initialPeers) {
 
-                        if (entry.id != peer.id) {
+                        if (entry.id != peer.id && entry.id != this.peerService.myCreds.id) {
+
+                            // console.log(entry.id + " " + )
 
                             const options = {
                                 url: "http://" + entry.ip + ":" + entry.listenPort + "/clients",
@@ -72,13 +85,43 @@ export class DemoHub {
 
                 });
 
-
             }
 
             if (url == "/peers") {
                 response.statusCode = 200;
                 response.setHeader("Content-Type", "application/json");
-                response.end(JSON.stringify(this.peers));
+                response.end(JSON.stringify(this.peerService.initialPeers));
+
+            }
+
+            if (url == "/message") {
+
+                let body: any = [];
+
+                request.on("data", (chunk: any) => {
+                    body.push(chunk);
+                }).on("end", () => {
+                    body = Buffer.concat(body).toString();
+                    // console.log(body);
+
+                    const post = querystring.parse(body);
+                    console.log(chalk.red.bgWhite(post.displayName) + ": " + post.message);
+
+                });
+
+                response.statusCode = 200;
+                response.setHeader("Content-Type", "application/json");
+                response.end("1");
+
+            }
+
+            if (url == "/clients") {
+
+                this.peerService.refreshPeers();
+
+                response.statusCode = 200;
+                response.setHeader("Content-Type", "application/json");
+                response.end("1");
 
             }
 

@@ -6,18 +6,21 @@ export class PeerService {
 
     myCreds: PeerNode = undefined;
 
-    initialPeers: PeerNode[];
+    hubPort: number = undefined;
+
+    initialPeers: PeerNode[] = Array();
 
 
     constructor(myCreds: PeerNode) {
         this.myCreds = myCreds;
+        this.addPeer(myCreds);
     }
 
     locatePeers() {
 
         /** Had issue with rejected connection to server without these headers */
         const options = {
-            url: "http://127.0.0.1:1111/checkin",
+            url: "http://127.0.0.1:" + this.hubPort + "/checkin",
             headers: {
               "User-Agent": "Mozilla/5.0",
               "Accept-Language": "*"
@@ -29,11 +32,13 @@ export class PeerService {
             }
           };
 
+          console.log("http://127.0.0.1:" + this.hubPort + "/checkin");
+
           this.request.post(options,
              (error: string, response: any, body: string) => {
             // console.log("Connect error:", error); // Print the error if one occurred
             // console.log("Connect statusCode:", response && response.statusCode); // Print the response status code if a response was received
-            // console.log("body:", body); // Print the HTML for the Google homepage.
+            console.log("body:", body); // Print the HTML for the Google homepage.
 
             this.initialPeers = JSON.parse(body);
 
@@ -42,20 +47,52 @@ export class PeerService {
         });
     }
 
+    addPeers(peers: PeerNode[]) {
+
+        for (const entry of peers) {
+
+            if (!this.hasPeer(entry))
+                this.initialPeers.push(entry);
+
+        }
+    }
+
+    addPeer(peer: PeerNode) {
+
+        if (!this.hasPeer(peer))
+            this.initialPeers.push(peer);
+
+    }
+
+    hasPeer(peer: PeerNode): boolean {
+
+        for (const entry of this.initialPeers) {
+
+            if (peer.id == entry.id)
+                return true;
+
+        }
+
+        return false;
+    }
+
+
     refreshPeers() {
 
         const options = {
-            url: "http://127.0.0.1:1111/peers",
+            url: "http://127.0.0.1:" + this.hubPort + "/peers",
             headers: {
               "User-Agent": "Mozilla/5.0",
               "Accept-Language": "*"
             }
           };
 
+          console.log("http://127.0.0.1:" + this.hubPort + "/peers");
+
           this.request.post(options,
              (error: string, response: any, body: string) => {
 
-            this.initialPeers = JSON.parse(body);
+            this.addPeers(JSON.parse(body));
 
         });
     }
