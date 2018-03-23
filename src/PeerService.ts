@@ -36,17 +36,14 @@ export class PeerService {
             }
           };
 
-          console.log("http://" + this.hubIp + ":" + this.hubPort + "/checkin");
+          // console.log("http://" + this.hubIp + ":" + this.hubPort + "/checkin");
 
           this.request.post(options,
              (error: string, response: any, body: string) => {
 
-                console.log("body:", body);
-
+                // console.log("body:", body);
                 this.peers = JSON.parse(body);
-
                 console.log("Found " + this.peers.length + " peers");
-
                 this.hasConnected = true;
 
             });
