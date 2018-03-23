@@ -1,0 +1,6 @@
+# Ignore built ts files
+# dist/**/*
+
+# VSC file
+nodechat.code-workspace
+
