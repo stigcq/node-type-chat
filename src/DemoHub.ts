@@ -42,6 +42,8 @@ export class DemoHub {
             if (url == "/clients")
                 this.notifyClients(request, response);
 
+            if (url == "/name_change")
+                this.notifyPeerNameChange(request, response);
 
         });
 
@@ -158,6 +160,32 @@ export class DemoHub {
         response.end("1");
 
         this.peerService.refreshPeers();
+    }
+
+    notifyPeerNameChange(request: any, response: any) {
+
+        let body: any = [];
+
+        request.on("data", (chunk: any) => {
+            body.push(chunk);
+        }).on("end", () => {
+            body = Buffer.concat(body).toString();
+
+            const post = querystring.parse(body);
+
+            const peer = this.peerService.getPeer(post.id);
+
+            if (peer != undefined) {
+                peer.displayName = post.displayName;
+                console.log(chalk.red.bgWhite(post.oldDisplayName) + " changed name to: " + post.displayName);
+
+            } // else probably get peer info from whoever notified
+
+        });
+
+        response.statusCode = 200;
+        response.setHeader("Content-Type", "application/json");
+        response.end("1");
     }
 
 }

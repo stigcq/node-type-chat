@@ -42,7 +42,9 @@ stdin.addListener("data", function(d) {
     const input: string = d.toString().trim();
 
     if (input.startsWith("name")) {
+        const oldname = peerNode.displayName;
         peerNode.displayName = input.substring(5);
+        peerService.myNameChanged(oldname);
         console.log("> Name changed");
     }
 
@@ -55,15 +57,6 @@ stdin.addListener("data", function(d) {
 
     }
 
-    /**
-     * If this is started then one shouldnt be able to run connect.
-     * Or least need to check if demohub is running. The peerservice
-     * could connect to another client
-     */
-    if (input.startsWith("hubport")) {
-        const port = input.substring(8);
-        peerService.hubPort = parseInt(port);
-    }
 
     if (input.startsWith("#")) {
         const myMessage = input.substring(2);

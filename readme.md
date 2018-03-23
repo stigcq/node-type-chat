@@ -56,6 +56,7 @@ Each peer functions both as a server and a client. A server/peer then offers met
 * Notify of new (chat) message
 * Notify of new peer(s)
 * Getting list of peers this peer has
+* Notify of peer changed (chat) name
 
 The peer itself offers these methods, and also use them from other peers
 

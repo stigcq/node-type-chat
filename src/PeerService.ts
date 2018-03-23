@@ -12,6 +12,8 @@ export class PeerService {
 
     peers: PeerNode[] = Array();
 
+    hasConnected: boolean = false;
+
 
     constructor(myCreds: PeerNode) {
         this.myCreds = myCreds;
@@ -44,6 +46,8 @@ export class PeerService {
                 this.peers = JSON.parse(body);
 
                 console.log("Found " + this.peers.length + " peers");
+
+                this.hasConnected = true;
 
             });
     }
@@ -88,6 +92,43 @@ export class PeerService {
         }
     }
 
+    getPeer(id: string): PeerNode {
+
+        for (const entry of this.peers) {
+
+            if (id == entry.id)
+                return entry;
+
+        }
+
+        return undefined;
+    }
+
+
+    myNameChanged(oldDisplayName: string) {
+
+        if (!this.hasConnected)
+            return;
+
+        // should traverse all peers
+        const options = {
+            url: "http://" + this.hubIp + ":" + this.hubPort + "/name_change",
+            headers: {
+                "User-Agent": "Mozilla/5.0",
+                "Accept-Language": "*"
+            },
+            form: {
+                "id": this.myCreds.id,
+                "displayName": this.myCreds.displayName,
+                "oldDisplayName": oldDisplayName
+            }
+        };
+
+        this.request.post(options,
+            (error: string, response: any, body: string) => {
+
+       });
+    }
 
     refreshPeers() {
 
