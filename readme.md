@@ -8,5 +8,10 @@ So to test it, start app 3 times and chat (with yourself)
 
 ### To run
 
+download the repository
+
+Run:
+npm install
+npm build
 npm start
 
