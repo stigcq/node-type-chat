@@ -64,6 +64,10 @@ The code needs a bit cleaning up, and then IPs should be integrated, since right
 for all. Though when a peer connects its IP is read, but in the input to connect to the peer network
 needs IP input. 
 
+Make an index.js which exports the functions so can be used as a module. The CLI interface should be possible to build with this module. Which also means some of the current output, like a message, shouldnt be outputted in the module, so I guess incoming messages or other stuff needs some listener interface, where the module user is notified and can react upon those events. 
+
+
+
 
 
 

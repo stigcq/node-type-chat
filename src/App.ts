@@ -10,30 +10,28 @@ const http = require("http");
 const request = require("request");
 const chalk = require("chalk");
 const querystring = require("querystring");
-
-require("string.prototype.startswith");
 const md5 = require("md5");
 
+
+require("string.prototype.startswith");
+
 // create my own peer
-const peerNode = new PeerNode();
-peerNode.displayName = "Hello world";
+const mySelf = new PeerNode();
+mySelf.displayName = "Hello world";
 
 const myDate = new Date();
-peerNode.id = md5(myDate.getTime());
-console.log("Your id is set to: " + peerNode.id);
+mySelf.id = md5(myDate.getTime());
+console.log("Your id is set to: " + mySelf.id);
 
-const peerService = new PeerService(peerNode);
-
+const peerService = new PeerService(mySelf);
 const hub = new DemoHub(peerService);
-
-
 
 const stdin = process.openStdin();
 
-console.log("> To set your own port write " + chalk.red.bgWhite("port [port-to-listen]"));
-console.log("> To set display name write " + chalk.red.bgWhite("name [display-name]"));
-console.log("> To connect network write " + chalk.red.bgWhite("connect [port-to-connect]"));
-console.log("> To send message write " + chalk.red.bgWhite("# [your-message]"));
+console.log(">> To set your own port write " + chalk.red.bgWhite(" port [port-to-listen] "));
+console.log(">> To set display name write  " + chalk.red.bgWhite(" name [display-name]" ));
+console.log(">> To connect network write   " + chalk.red.bgWhite(" connect [port-to-connect]" ));
+console.log(">> To send message write      " + chalk.red.bgWhite(" # [your-message]" ));
 // console.log("To send message to user write " + chalk.red.bgWhite("@[display-name] [your-message]"));
 
 
@@ -42,17 +40,16 @@ stdin.addListener("data", function(d) {
     const input: string = d.toString().trim();
 
     if (input.startsWith("name")) {
-        const oldname = peerNode.displayName;
-        peerNode.displayName = input.substring(5);
+        const oldname = mySelf.displayName;
+        mySelf.displayName = input.substring(5);
         peerService.myNameChanged(oldname);
-        console.log("> Name changed");
+        console.log(">> Name changed");
     }
 
     if (input.startsWith("port")) {
-
         const port = parseInt(input.substring(5));
-        peerNode.port = port;
-        peerNode.ip = "127.0.0.1";
+        mySelf.port = port;
+        mySelf.ip = "127.0.0.1";
         hub.startServer(port);
 
     }
@@ -65,22 +62,16 @@ stdin.addListener("data", function(d) {
 
     if (input.startsWith("connect")) {
 
-        if (peerNode.port == 0) {
-
+        if (mySelf.port == 0) {
             console.log("Set your own port first");
             return;
         }
 
-        // const port = input.substring(8);
-        // peerNode.port = parseInt(port);
-
         peerService.hubPort = parseInt(input.substring(8));
 
-        console.log(chalk.blue.bgRed("> Trying to get peer list... "));
-        peerService.locatePeers();
-
-        // if(hub.isStarted)
-        // hub.startServer(peerNode.port);
+        // TODO this connect also get peerslist. seperate it
+        console.log(chalk.blue.bgRed("> Connecting to network... "));
+        peerService.connect();
 
     }
 

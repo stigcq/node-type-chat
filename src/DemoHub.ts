@@ -141,7 +141,7 @@ export class DemoHub {
             // console.log(body);
 
             const post = querystring.parse(body);
-            console.log(chalk.red.bgWhite(" " + post.displayName + " ") + ": " + post.message);
+            console.log(chalk.red.bgWhite(" " + post.displayName + " ") + " " + post.message);
 
         });
 

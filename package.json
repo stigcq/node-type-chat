@@ -1,8 +1,8 @@
 {
   "name": "node-type-chat",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "node chat in cli",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "npm run serve",
     "build": "npm run build-ts",

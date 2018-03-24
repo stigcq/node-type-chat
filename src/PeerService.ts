@@ -3,6 +3,7 @@ import { PeerNode } from "./peernode";
 export class PeerService {
 
     request = require("request");
+    chalk = require("chalk");
 
     myCreds: PeerNode = undefined;
 
@@ -20,7 +21,7 @@ export class PeerService {
         this.addPeer(myCreds);
     }
 
-    locatePeers() {
+    connect() {
 
         /** Had issue with rejected connection to server without these headers */
         const options = {
@@ -41,6 +42,7 @@ export class PeerService {
           this.request.post(options,
              (error: string, response: any, body: string) => {
 
+                // TODO no reason to get peers here
                 // console.log("body:", body);
                 this.peers = JSON.parse(body);
                 console.log("Found " + this.peers.length + " peers");
@@ -51,19 +53,16 @@ export class PeerService {
 
     addPeers(peers: PeerNode[]) {
 
-        for (const entry of peers) {
-
-            if (!this.hasPeer(entry))
-                this.peers.push(entry);
-
-        }
+        for (const entry of peers)
+            this.addPeer(entry);
     }
 
     addPeer(peer: PeerNode) {
 
-        if (!this.hasPeer(peer))
+        if (!this.hasPeer(peer)) {
             this.peers.push(peer);
-
+            console.log(this.chalk.bold(peer.displayName) + " has arrived, say hello!");
+        }
     }
 
     hasPeer(peer: PeerNode): boolean {
