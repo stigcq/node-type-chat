@@ -91,26 +91,7 @@ export class DemoHub {
             response.end(JSON.stringify(this.peerService.peers));
 
             // extract to seperate function
-            for (const entry of this.peerService.peers) {
-
-                if (entry.id != peer.id && entry.id != this.peerService.myCreds.id) {
-
-                    // console.log(entry.id + " " + )
-
-                    const options = {
-                        url: "http://" + entry.ip + ":" + entry.port + "/clients",
-                        headers: {
-                        "User-Agent": "Mozilla/5.0",
-                        "Accept-Language": "*"
-                        }
-                    };
-
-                    this.request(options,
-                        (error: string, response: any, body: string) => {
-
-                    });
-                }
-            }
+            this.peerService.notifyOthersAboutNewPeer(peer);
 
         });
     }

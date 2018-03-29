@@ -30,7 +30,7 @@ const stdin = process.openStdin();
 
 console.log(">> To set your own port write " + chalk.red.bgWhite(" port [port-to-listen] "));
 console.log(">> To set display name write  " + chalk.red.bgWhite(" name [display-name]" ));
-console.log(">> To connect network write   " + chalk.red.bgWhite(" connect [port-to-connect]" ));
+console.log(">> To connect network write   " + chalk.red.bgWhite(" connect [ip] [port]" ));
 console.log(">> To send message write      " + chalk.red.bgWhite(" # [your-message]" ));
 // console.log("To send message to user write " + chalk.red.bgWhite("@[display-name] [your-message]"));
 
@@ -67,7 +67,12 @@ stdin.addListener("data", function(d) {
             return;
         }
 
-        peerService.hubPort = parseInt(input.substring(8));
+        const ipAndPort: string[] = input.substring(8).split(" ");
+
+        peerService.hubIp = ipAndPort[0].trim();
+        peerService.hubPort = parseInt(ipAndPort[1].trim());
+
+        console.log("HUB: " + peerService.hubIp + ":" + peerService.hubPort);
 
         // TODO this connect also get peerslist. seperate it
         console.log(chalk.blue.bgRed("> Connecting to network... "));

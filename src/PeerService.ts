@@ -177,6 +177,36 @@ export class PeerService {
         });
     }
 
+    /**
+     * Notify other peers about a new peer. I actually would prefer
+     * if all messsaging is done with JSON, but not sure that works
+     * with request. Need check that.
+     * @param peer the new peer
+     */
+    notifyOthersAboutNewPeer(peer: PeerNode) {
+
+        for (const entry of this.peers) {
+
+            if (entry.id != peer.id && entry.id != this.myCreds.id) {
+
+                // console.log(entry.id + " " + )
+
+                const options = {
+                    url: "http://" + entry.ip + ":" + entry.port + "/clients",
+                    headers: {
+                    "User-Agent": "Mozilla/5.0",
+                    "Accept-Language": "*"
+                    }
+                };
+
+                this.request(options,
+                    (error: string, response: any, body: string) => {
+
+                });
+            }
+        }
+    }
+
 
 
 }
