@@ -32,19 +32,17 @@ port 1200
 ```
 name JoeDoe
 ```
-3. Then connect to network again by specifying a port to connect to. For first peer, choose its own port so it connect to itself (no others to connect to yet)
+3. Then connect to network again by specifying ip andport to connect to. For first peer, choose to connect to itself (no others to connect to yet)
 ```
-connect 1200
+connect 127.0.0.1 1200
 ```
-4. For second peer do the same, but when connecting choose the port of first peer
+4. For second peer do the same, but when connecting choose the ip and port of first peer
 ```
 port 1300
 name IamSecondPeer
-connect 1200
+connect 127.0.0.1 1200
 ```
 5. For third or more peer(s) choose any port of an existing peer.
-
-Currently it only takes ports and use 127.0.0.1 as IP, soon IPs will be added to this input
 
 ## How it works
 
@@ -59,10 +57,6 @@ The peer itself offers these methods, and also use them from other peers
 
 
 ## Next up
-
-The code needs a bit cleaning up, and then IPs should be integrated, since right now it assumes 127.0.0.1
-for all. Though when a peer connects its IP is read, but in the input to connect to the peer network
-needs IP input. 
 
 Make an index.js which exports the functions so can be used as a module. The CLI interface should be possible to build with this module. Which also means some of the current output, like a message, shouldnt be outputted in the module, so I guess incoming messages or other stuff needs some listener interface, where the module user is notified and can react upon those events. 
 
