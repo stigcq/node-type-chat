@@ -1,9 +1,11 @@
 /**
+ * This is basicly sample usage how one can use the module.
  *
  */
 import { PeerNode } from "./PeerNode";
 import { PeerService } from "./PeerService";
 import { DemoHub } from "./DemoHub";
+import { NodeTypeChatListener } from "./NodeTypeChatListener";
 
 
 const http = require("http");
@@ -18,21 +20,40 @@ require("string.prototype.startswith");
 // create my own peer
 const mySelf = new PeerNode();
 mySelf.displayName = "Hello world";
-
-const myDate = new Date();
-mySelf.id = md5(myDate.getTime());
-console.log("Your id is set to: " + mySelf.id);
+mySelf.generateId();
 
 const peerService = new PeerService(mySelf);
 const hub = new DemoHub(peerService);
 
 const stdin = process.openStdin();
 
+class MyListener implements NodeTypeChatListener {
+
+    message = function(peer: PeerNode, message: string) {
+        console.log(chalk.red.bgWhite(" " + peer.displayName + " ") + " " + message);
+
+    };
+
+    peerJoined = function(peer: PeerNode) {
+        console.log(chalk.red.bgWhite(" " + peer.displayName + " joined"));
+
+    };
+
+    peerNameChanged = function(peer: PeerNode, oldName: string) {
+        console.log(chalk.red.bgWhite(oldName + " changed name to: " + peer.displayName));
+
+    };
+
+}
+
+hub.addListener(new MyListener());
+
 console.log(">> To set your own port write " + chalk.red.bgWhite(" port [port-to-listen] "));
 console.log(">> To set display name write  " + chalk.red.bgWhite(" name [display-name]" ));
 console.log(">> To connect network write   " + chalk.red.bgWhite(" connect [ip] [port]" ));
 console.log(">> To send message write      " + chalk.red.bgWhite(" # [your-message]" ));
 // console.log("To send message to user write " + chalk.red.bgWhite("@[display-name] [your-message]"));
+
 
 
 stdin.addListener("data", function(d) {

@@ -42,7 +42,7 @@ port 1300
 name IamSecondPeer
 connect 127.0.0.1 1200
 ```
-5. For third or more peer(s) choose any port of an existing peer.
+5. For third or more peer(s) choose any ip and port of an existing peer.
 
 ## How it works
 

@@ -6,6 +6,7 @@ require("string.prototype.startswith");
 
 import { PeerNode } from "./peernode";
 import { PeerService } from "./peerservice";
+import { NodeTypeChatListener } from "./NodeTypeChatListener";
 
 
 /**
@@ -17,8 +18,17 @@ export class DemoHub {
 
     request = require("request");
 
+    listeners: NodeTypeChatListener[] = Array();
+
+
     constructor(peerService: PeerService) {
         this.peerService = peerService;
+    }
+
+
+    addListener(myListener: NodeTypeChatListener) {
+
+        this.listeners.push(myListener);
     }
 
 
@@ -28,22 +38,23 @@ export class DemoHub {
 
             const { headers, method, url } = request;
 
+            /**
+             * Some simple basic routing.
+             */
             if (url == "/checkin")
                 this.handleCheckin(request, response);
 
             if (url == "/peers")
-                this.pullPeers(request, response);
-
+                this.peerListRequested(request, response);
 
             if (url == "/message")
-                this.notifyMessage(request, response);
-
+                this.messageNotification(request, response);
 
             if (url == "/clients")
-                this.notifyClients(request, response);
+                this.peerNotification(request, response);
 
             if (url == "/name_change")
-                this.notifyPeerNameChange(request, response);
+                this.peerNameChangeNotification(request, response);
 
         });
 
@@ -90,6 +101,9 @@ export class DemoHub {
             response.setHeader("Content-Type", "application/json");
             response.end(JSON.stringify(this.peerService.peers));
 
+            for (const listener of this.listeners)
+                listener.peerJoined(peer);
+
             // extract to seperate function
             this.peerService.notifyOthersAboutNewPeer(peer);
 
@@ -102,7 +116,7 @@ export class DemoHub {
      * @param request
      * @param response
      */
-    pullPeers(request: any, response: any) {
+    peerListRequested(request: any, response: any) {
         response.statusCode = 200;
         response.setHeader("Content-Type", "application/json");
         response.end(JSON.stringify(this.peerService.peers));
@@ -111,7 +125,7 @@ export class DemoHub {
     /**
      * called to notify about a new message
      */
-    notifyMessage(request: any, response: any) {
+    messageNotification(request: any, response: any) {
 
         let body: any = [];
 
@@ -119,10 +133,14 @@ export class DemoHub {
             body.push(chunk);
         }).on("end", () => {
             body = Buffer.concat(body).toString();
-            // console.log(body);
 
             const post = querystring.parse(body);
-            console.log(chalk.red.bgWhite(" " + post.displayName + " ") + " " + post.message);
+            // console.log(chalk.red.bgWhite(" " + post.displayName + " ") + " " + post.message);
+
+            const peer = this.peerService.getPeer(post.id);
+
+            for (const listener of this.listeners)
+                listener.message(peer, post.message);
 
         });
 
@@ -134,16 +152,32 @@ export class DemoHub {
     /**
      * Called to notify that there are new peers
      */
-    notifyClients(request: any, response: any) {
+    peerNotification(request: any, response: any) {
+
+        let body: any = [];
+
+        request.on("data", (chunk: any) => {
+            body.push(chunk);
+        }).on("end", () => {
+            body = Buffer.concat(body).toString();
+
+            const post = querystring.parse(body);
+            // console.log(post.message);
+
+            const peer: PeerNode = JSON.parse(post.message);
+
+            this.peerService.addPeer(peer);
+
+        });
 
         response.statusCode = 200;
         response.setHeader("Content-Type", "application/json");
         response.end("1");
 
-        this.peerService.refreshPeers();
+        // this.peerService.refreshPeers();
     }
 
-    notifyPeerNameChange(request: any, response: any) {
+    peerNameChangeNotification(request: any, response: any) {
 
         let body: any = [];
 
@@ -158,7 +192,10 @@ export class DemoHub {
 
             if (peer != undefined) {
                 peer.displayName = post.displayName;
-                console.log(chalk.red.bgWhite(post.oldDisplayName) + " changed name to: " + post.displayName);
+                // console.log(chalk.red.bgWhite(post.oldDisplayName) + " changed name to: " + post.displayName);
+
+                for (const listener of this.listeners)
+                    listener.peerNameChanged(peer, post.oldDisplayName);
 
             } // else probably get peer info from whoever notified
 

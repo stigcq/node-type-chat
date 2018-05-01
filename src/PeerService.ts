@@ -136,7 +136,7 @@ export class PeerService {
             }
           };
 
-          console.log("http://" + this.hubIp + ":" + this.hubPort + "/peers");
+          // console.log("http://" + this.hubIp + ":" + this.hubPort + "/peers");
 
           this.request.post(options,
              (error: string, response: any, body: string) => {
@@ -196,6 +196,9 @@ export class PeerService {
                     headers: {
                     "User-Agent": "Mozilla/5.0",
                     "Accept-Language": "*"
+                    },
+                    form: {
+                        "message": JSON.stringify(peer)
                     }
                 };
 
