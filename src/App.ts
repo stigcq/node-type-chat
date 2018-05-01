@@ -27,6 +27,9 @@ const hub = new DemoHub(peerService);
 
 const stdin = process.openStdin();
 
+/**
+ * Example listener
+ */
 class MyListener implements NodeTypeChatListener {
 
     message = function(peer: PeerNode, message: string) {
@@ -55,11 +58,14 @@ console.log(">> To send message write      " + chalk.red.bgWhite(" # [your-messa
 // console.log("To send message to user write " + chalk.red.bgWhite("@[display-name] [your-message]"));
 
 
-
+/**
+ * Example how to start up, with input required
+ */
 stdin.addListener("data", function(d) {
 
     const input: string = d.toString().trim();
 
+    // I want change name
     if (input.startsWith("name")) {
         const oldname = mySelf.displayName;
         mySelf.displayName = input.substring(5);
@@ -67,6 +73,7 @@ stdin.addListener("data", function(d) {
         console.log(">> Name changed");
     }
 
+    // I want set my own port
     if (input.startsWith("port")) {
         const port = parseInt(input.substring(5));
         mySelf.port = port;
@@ -76,11 +83,13 @@ stdin.addListener("data", function(d) {
     }
 
 
+    // I want send a message
     if (input.startsWith("#")) {
         const myMessage = input.substring(2);
         peerService.pushToPeers(myMessage);
     }
 
+    // I want connect to the nextwork
     if (input.startsWith("connect")) {
 
         if (mySelf.port == 0) {

@@ -82,8 +82,10 @@ export class PeerService {
 
         for (const entry of this.peers) {
 
-            if (this.myCreds.id != entry.id)
+            if (this.myCreds.id != entry.id) {
                 this.hubPort = entry.port;
+                this.hubIp = entry.ip;
+            }
 
         }
     }

@@ -135,7 +135,6 @@ export class DemoHub {
             body = Buffer.concat(body).toString();
 
             const post = querystring.parse(body);
-            // console.log(chalk.red.bgWhite(" " + post.displayName + " ") + " " + post.message);
 
             const peer = this.peerService.getPeer(post.id);
 
@@ -162,7 +161,6 @@ export class DemoHub {
             body = Buffer.concat(body).toString();
 
             const post = querystring.parse(body);
-            // console.log(post.message);
 
             const peer: PeerNode = JSON.parse(post.message);
 
@@ -192,7 +190,6 @@ export class DemoHub {
 
             if (peer != undefined) {
                 peer.displayName = post.displayName;
-                // console.log(chalk.red.bgWhite(post.oldDisplayName) + " changed name to: " + post.displayName);
 
                 for (const listener of this.listeners)
                     listener.peerNameChanged(peer, post.oldDisplayName);
