@@ -1,8 +1,9 @@
 {
   "name": "node-type-chat",
-  "version": "1.0.3",
+  "version": "1.1.4",
   "description": "node chat in cli",
   "main": "dist/index.js",
+  "typings": "src/index.n.ts",
   "scripts": {
     "start": "npm run serve",
     "build": "npm run build-ts",
@@ -13,14 +14,14 @@
   "author": "Stig T. Hansen",
   "license": "ISC",
   "dependencies": {
-    "chalk": "^2.3.2",
+    "chalk": "^2.4.1",
     "md5": "^2.2.1",
     "request": "^2.85.0",
     "string.prototype.startswith": "^0.2.0"
   },
   "devDependencies": {
-    "@types/node": "^9.4.7",
+    "@types/node": "^9.6.8",
     "tslint": "^5.9.1",
-    "typescript": "^2.7.2"
+    "typescript": "^2.8.3"
   }
 }

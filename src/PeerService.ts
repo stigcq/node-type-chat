@@ -61,7 +61,7 @@ export class PeerService {
 
         if (!this.hasPeer(peer)) {
             this.peers.push(peer);
-            console.log(this.chalk.bold(peer.displayName) + " has arrived, say hello!");
+            // console.log(this.chalk.bold(peer.displayName) + " has arrived, say hello!");
         }
     }
 
