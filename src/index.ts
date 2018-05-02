@@ -1,6 +1,7 @@
 import { DemoHub  } from "./DemoHub";
 import { PeerService } from "./PeerService";
 import { NodeTypeChatListener } from "./NodeTypeChatListener";
+import { NodeTypeChatListenerImpl } from "./NodeTypeChatListenerImpl";
 import { PeerNode } from "./PeerNode";
 
 

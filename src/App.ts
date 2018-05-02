@@ -6,6 +6,7 @@ import { PeerNode } from "./PeerNode";
 import { PeerService } from "./PeerService";
 import { DemoHub } from "./DemoHub";
 import { NodeTypeChatListener } from "./NodeTypeChatListener";
+import { NodeTypeChatListenerImpl } from "./NodeTypeChatListenerImpl";
 
 
 const http = require("http");
@@ -26,6 +27,15 @@ const peerService = new PeerService(mySelf);
 const hub = new DemoHub(peerService);
 
 const stdin = process.openStdin();
+
+
+class TestListender extends NodeTypeChatListenerImpl {
+
+    message = function(peer: PeerNode, message: string) {
+        console.log(chalk.red.bgWhite("EXTENDED " + peer.displayName + " ") + " " + message);
+
+    };
+}
 
 /**
  * Example listener
@@ -49,7 +59,7 @@ class MyListener implements NodeTypeChatListener {
 
 }
 
-hub.addListener(new MyListener());
+hub.addListener(new TestListender());
 
 console.log(">> To set your own port write " + chalk.red.bgWhite(" port [port-to-listen] "));
 console.log(">> To set display name write  " + chalk.red.bgWhite(" name [display-name]" ));
