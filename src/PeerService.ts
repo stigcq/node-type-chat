@@ -1,4 +1,4 @@
-import { PeerNode } from "./peernode";
+import { PeerNode } from "./PeerNode";
 
 export class PeerService {
 

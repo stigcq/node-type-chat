@@ -4,8 +4,9 @@ const querystring = require("querystring");
 
 require("string.prototype.startswith");
 
-import { PeerNode } from "./peernode";
-import { PeerService } from "./peerservice";
+// Testing on AWS and obviously discovered doesnt work with small letters
+import { PeerNode } from "./PeerNode";
+import { PeerService } from "./PeerService";
 import { NodeTypeChatListener } from "./NodeTypeChatListener";
 
 
