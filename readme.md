@@ -58,7 +58,18 @@ The peer itself offers these methods, and also use them from other peers
 
 ## Next up
 
-Make an index.js which exports the functions so can be used as a module. The CLI interface should be possible to build with this module. Which also means some of the current output, like a message, shouldnt be outputted in the module, so I guess incoming messages or other stuff needs some listener interface, where the module user is notified and can react upon those events. 
+I think theres an issue if a connecting client doesnt have a public IP or is behind
+some firewall. Then first node try to connect to new one and fails. Need test and
+adjust accordingly. 
+
+One can consider if such a node should be able to connect at all, but well the issue
+is basicly the node trying to connect to a hub needs some try catch to see if
+theres a valid response from the IP it connects to. 
+
+I am testing it on AWS. Succeeded setting it up but with 2 issues:
+1. Well the guide here doesnt say node version required, probably should
+2. Some import statements didnt use cap letters which meant it couldnt find
+the classes/modules on a linux. 
 
 
 
