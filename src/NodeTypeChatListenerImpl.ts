@@ -10,6 +10,9 @@ const chalk = require("chalk");
  */
 export class NodeTypeChatListenerImpl implements NodeTypeChatListener {
 
+    constructor() {
+    }
+
     message = function(peer: PeerNode, message: string) {
         console.log(chalk.red.bgWhite(" " + peer.displayName + " ") + " " + message);
 

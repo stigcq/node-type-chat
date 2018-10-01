@@ -31,6 +31,11 @@ const stdin = process.openStdin();
 
 class TestListender extends NodeTypeChatListenerImpl {
 
+    constructor() {
+        super();
+    }
+
+
     message = function(peer: PeerNode, message: string) {
         console.log(chalk.red.bgWhite("EXTENDED " + peer.displayName + " ") + " " + message);
 
